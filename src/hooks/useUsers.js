@@ -19,3 +19,14 @@ export const useCreateUser = () => {
         }
     });
 }
+
+export const useDeleteUser = () => {
+    return useMutation(async (id) => {
+        const response = await API.delete('users', id);
+        return response.data;
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries('get-users');
+        }
+    });
+}
