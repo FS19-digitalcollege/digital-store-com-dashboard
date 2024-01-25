@@ -16,6 +16,7 @@ const PageUsers = () => {
     const {mutateAsync: criarUsuario} = useCreateUser();
     const {mutateAsync: deletarUsuario} = useDeleteUser();
     const { register: createRegister, handleSubmit: createHandleSubmit } = useForm();
+    const { register: updateRegister, handleSubmit: updateHandleSubmit, setValue: updateValue } = useForm();
     const toast = useRef();
     
     const popup = (user_id) => {
@@ -70,6 +71,8 @@ const PageUsers = () => {
         });
     }
 
+    const updateUser = (data) => {}
+
     return (
         <>
             <div className={'flex justify-content-between mb-4'}>
@@ -83,7 +86,15 @@ const PageUsers = () => {
                 <Column field="user_email" header="Email"></Column>
                 <Column header={'Ações'} bodyClassName={'w-1'} body={(rowData) => (
                     <div className='flex gap-3'>
-                        <Button rounded icon={'pi pi-pencil'} />
+                        <Button 
+                            rounded 
+                            icon={'pi pi-pencil'} 
+                            onClick={() => {
+                                updateValue('user_name', rowData.user_name);
+                                updateValue('user_email', rowData.user_email);
+                                setVisibleEdit(true);
+                            }}
+                        />
                         <Button rounded icon={'pi pi-trash'} onClick={() => popup(rowData.user_id)} />
                     </div>
                 )}/>
@@ -131,7 +142,36 @@ const PageUsers = () => {
                 onHide={() => setVisibleEdit(false)}
                 position={'right'}
             >
-                alguma coisa
+                <form onSubmit={updateHandleSubmit(updateUser)}>
+                    <label htmlFor="nome" className='block mb-2'>Nome</label>
+                    <InputText 
+                        id='nome'
+                        placeholder='Digite seu Nome'
+                        className='mb-3 w-full'
+                        { ...updateRegister('user_name', {required: true}) }
+                    />
+                    <label htmlFor="email" className='block mb-2'>Email</label>
+                    <InputText 
+                        id='email'
+                        type='email'
+                        placeholder='Digite seu Email'
+                        className='mb-3 w-full'
+                        { ...updateRegister('user_email', {required: true}) }
+                    />
+                    <label htmlFor="senha" className='block mb-2'>Senha</label>
+                    <InputText 
+                        id='senha'
+                        type='password'
+                        placeholder='******'
+                        className='mb-3 w-full'
+                        { ...updateRegister('user_password') }
+                    />
+                    <Button
+                        type='submit' 
+                        label='Salvar'
+                        className='w-full border-round-3xl'
+                    />
+                </form>
             </Sidebar>
             <ConfirmDialog />
             <Toast ref={toast} position={'bottom-right'} />
